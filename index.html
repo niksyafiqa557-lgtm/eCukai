@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>e-Cukai Lot — Majlis Daerah Pasir Puteh</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="login-card">
+      <img src="images/mdpp-logo.jpeg" class="crest" alt="Majlis Daerah Pasir Puteh logo">
+      <p class="council-name">Majlis Daerah Pasir Puteh</p>
+      <h1>Semakan Status Cukai Taksiran<br><span style="font-size:14px;font-weight:500;color:#948C7C;">Officer Access</span></h1>
+
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Log In</div>
+        <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Register</div>
+      </div>
+
+      <div class="form-note" id="auth-note"></div>
+
+      <form id="login-form" class="auth-form active">
+        <div class="field">
+          <label for="officer-id">Staff ID</label>
+          <input id="officer-id" type="text" placeholder="e.g. mdpp0234" value="mdpp0234" required>
+        </div>
+        <div class="field">
+          <label for="officer-pw">Password</label>
+          <div class="pw-wrap">
+            <input id="officer-pw" type="password" placeholder="••••••••" required>
+            <button class="pw-toggle" type="button" data-target="officer-pw" aria-label="Show password"></button>
+          </div>
+        </div>
+        <button class="login-btn" type="submit">Log In</button>
+      </form>
+
+      <form id="register-form" class="auth-form">
+        <div class="field">
+          <label for="reg-name">Full Name</label>
+          <input id="reg-name" type="text" placeholder="e.g. Ahmad bin Ismail" required>
+        </div>
+        <div class="field">
+          <label for="reg-staffid">Staff ID</label>
+          <input id="reg-staffid" type="text" placeholder="e.g. mdpp0512" required>
+        </div>
+        <div class="field">
+          <label for="reg-email">Email</label>
+          <input id="reg-email" type="email" placeholder="name@mdpp.gov.my" required>
+        </div>
+        <div class="field">
+          <label for="reg-pw">Password</label>
+          <div class="pw-wrap">
+            <input id="reg-pw" type="password" placeholder="Minimum 8 characters" required>
+            <button class="pw-toggle" type="button" data-target="reg-pw" aria-label="Show password"></button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="reg-pw2">Confirm Password</label>
+          <div class="pw-wrap">
+            <input id="reg-pw2" type="password" placeholder="Re-enter password" required>
+            <button class="pw-toggle" type="button" data-target="reg-pw2" aria-label="Show password"></button>
+          </div>
+        </div>
+        <button class="login-btn" type="submit">Create Account</button>
+      </form>
+
+      <p class="login-hint" id="auth-hint">Welcome to E-Cukai system. Please enter your valid staff ID and password to continue.</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard">
+    <div id="topbar">
+      <div class="left">
+        <img src="images/mdpp-logo.jpeg" alt="MDPP logo" style="height:28px;width:auto;">
+        <div class="title">e-Cukai Lot<small>Location-Based Assessment Tax Checking · Pasir Puteh</small></div>
+      </div>
+      <div class="right">
+        <span class="officer">👤 <span id="officer-name-display">mdpp0234</span></span>
+        <button class="logout" id="logout-btn">Log Out</button>
+      </div>
+    </div>
+
+    <div id="body-grid">
+      <div id="sidebar">
+        <div class="stat-strip">
+          <div class="stat-cell"><div class="num" id="stat-total">0</div><div class="lbl">Total Lots</div></div>
+          <div class="stat-cell"><div class="num" id="stat-collected">RM0</div><div class="lbl">Collected</div></div>
+          <div class="stat-cell paid"><div class="num" id="stat-paid">0</div><div class="lbl">Paid</div></div>
+          <div class="stat-cell unpaid"><div class="num" id="stat-unpaid">0</div><div class="lbl">Unpaid</div></div>
+        </div>
+        <div class="search-block">
+          <label for="search-input">Search by address or account no.</label>
+          <input id="search-input" type="text" placeholder="e.g. Jalan Kota Bharu / 100245">
+          <label for="area-filter" style="margin-top:2px;">Filter by area</label>
+          <select id="area-filter">
+            <option value="all">All areas</option>
+          </select>
+        </div>
+        <div class="list-header">
+          <span>Property Records</span>
+          <button class="add-btn" id="open-add-modal-btn" type="button">+ Add Property</button>
+        </div>
+        <div id="record-list"></div>
+      </div>
+
+      <div id="map-wrap">
+        <div id="map"></div>
+        <div class="map-caption"><span class="dot paid"></span>Paid &nbsp;&nbsp;<span class="dot unpaid"></span>Unpaid — click a lot to open its record</div>
+
+        <div id="detail-panel">
+          <div class="dp-header">
+            <button class="dp-close" id="dp-close">✕</button>
+            <div class="status-badge" id="dp-status-badge">PAID</div>
+            <div class="addr" id="dp-addr">—</div>
+            <div class="acc" id="dp-acc">Account No. —</div>
+          </div>
+          <div class="dp-section">
+            <div class="dp-row"><span class="k">Area</span><span class="v" id="dp-area">—</span></div>
+            <div class="dp-row"><span class="k">Property Type</span><span class="v" id="dp-type">—</span></div>
+            <div class="dp-row"><span class="k">Tax Year</span><span class="v" id="dp-year">—</span></div>
+          </div>
+          <div class="dp-section">
+            <div class="dp-amount" id="dp-amount">RM0.00</div>
+            <div class="dp-amount-lbl">Assessment Tax Amount</div>
+          </div>
+          <div class="dp-section" id="dp-payment-section">
+            <div class="dp-row"><span class="k">Payment Date</span><span class="v" id="dp-paydate">—</span></div>
+            <div class="dp-row"><span class="k">Amount Paid</span><span class="v" id="dp-payamount">—</span></div>
+          </div>
+          <div class="dp-section">
+            <div class="dp-note" id="dp-note">This lot's assessment tax has been paid in full for the current year.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD PROPERTY MODAL -->
+  <div id="add-modal-overlay">
+    <div id="add-modal">
+      <div class="am-header">
+        <h2>Add Property</h2>
+        <button class="am-close" id="add-modal-close" type="button">✕</button>
+      </div>
+      <form id="add-property-form">
+        <div class="am-note" id="add-modal-note"></div>
+
+        <div class="field">
+          <label for="ap-account">Account No.</label>
+          <input id="ap-account" type="text" placeholder="e.g. 101245" required>
+        </div>
+        <div class="field">
+          <label for="ap-address">Address</label>
+          <input id="ap-address" type="text" placeholder="e.g. Jalan Kota Bharu, Pasir Puteh" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ap-area">Area</label>
+            <input id="ap-area" type="text" placeholder="e.g. Bandar Pasir Puteh" required>
+          </div>
+          <div class="field">
+            <label for="ap-type">Property Type</label>
+            <select id="ap-type" required>
+              <option value="">Select…</option>
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Agricultural">Agricultural</option>
+              <option value="Industrial">Industrial</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ap-lat">Latitude</label>
+            <input id="ap-lat" type="text" placeholder="e.g. 5.8322000" required>
+          </div>
+          <div class="field">
+            <label for="ap-lng">Longitude</label>
+            <input id="ap-lng" type="text" placeholder="e.g. 102.4058000" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ap-year">Tax Year</label>
+            <input id="ap-year" type="number" value="2026" required>
+          </div>
+          <div class="field">
+            <label for="ap-amount">Amount (RM)</label>
+            <input id="ap-amount" type="text" placeholder="e.g. 150.00" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="ap-status">Status</label>
+          <select id="ap-status">
+            <option value="UNPAID">Unpaid</option>
+            <option value="PAID">Paid</option>
+          </select>
+        </div>
+        <button class="login-btn" type="submit">Save Property</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

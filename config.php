@@ -3,7 +3,7 @@
 // Database connection (XAMPP defaults — adjust if your setup differs)
 // ---------------------------------------------------------------------
 $DB_HOST = 'localhost';
-$DB_PORT = '3307';   // change this if your MySQL runs on a different port
+$DB_PORT = '3307';
 $DB_NAME = 'new_ecukai';
 $DB_USER = 'root';
 $DB_PASS = '';

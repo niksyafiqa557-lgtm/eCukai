@@ -19,12 +19,13 @@
 
   /* ---------- LOGIN ---------- */
   #login-screen{
-    height:100%;width:100%;display:flex;align-items:center;justify-content:center;
+    height:100%;width:100%;display:flex;align-items:safe center;justify-content:center;
     background:
       radial-gradient(circle at 15% 20%, rgba(122,35,49,0.06), transparent 40%),
       radial-gradient(circle at 85% 80%, rgba(200,155,60,0.10), transparent 45%),
       var(--paper);
     position:relative;
+    overflow-y:auto;
   }
   #login-screen::before{
     content:"";position:absolute;inset:0;
@@ -250,3 +251,43 @@
   #add-modal .am-note.show{display:block;}
   #add-modal .am-note.success{background:var(--paid-bg);color:var(--paid);}
   #add-modal .am-note.error{background:var(--unpaid-bg);color:var(--unpaid);}
+
+  @media (max-width: 760px){
+    #app{height:100vh;height:100dvh;width:100%;}
+    #login-screen{padding:20px 14px;overflow-y:auto;}
+    .login-card{width:min(380px,100%);padding:32px 24px 26px;}
+
+    #dashboard{grid-template-rows:56px minmax(0,1fr);}
+    #topbar{padding:0 12px;gap:8px;}
+    #topbar .left{gap:8px;min-width:0;}
+    #topbar .title{font-size:13px;}
+    #topbar .title small{font-size:10px;}
+    #topbar .right{gap:8px;font-size:12px;}
+    #topbar .right .officer{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    #topbar .logout{padding:6px 9px;}
+
+    #body-grid{
+      grid-template-columns:minmax(0,1fr);
+      grid-template-rows:minmax(260px,44vh) minmax(300px,1fr);
+      overflow-y:auto;
+      overflow-x:hidden;
+    }
+    #map-wrap{grid-row:1;min-width:0;}
+    #sidebar{grid-row:2;min-height:0;border-right:0;border-top:1px solid var(--line);}
+    #detail-panel{left:12px;right:12px;width:auto;}
+    .map-caption{left:10px;right:10px;bottom:10px;max-width:calc(100% - 20px);}
+
+    #add-modal-overlay{padding:12px;}
+    #add-modal{width:min(420px,100%);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);}
+    #add-modal .field-row{grid-template-columns:minmax(0,1fr);gap:0;}
+  }
+
+  @media (max-width: 420px){
+    #topbar .title small{display:none;}
+    #topbar .right .officer{max-width:72px;}
+    .login-card{padding:28px 20px 24px;}
+  }
+
+  @media (max-width: 760px) and (max-height: 650px){
+    #login-screen{align-items:flex-start;}
+  }

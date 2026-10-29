@@ -14,8 +14,7 @@ document.querySelectorAll('.pw-toggle').forEach(btn => {
 });
 
 /* ---------------- API HELPER ---------------- */
-/* Relative paths — works because these PHP files live in the same
-   /eCukai folder as this HTML file, served by Apache via XAMPP. */
+/* These paths use PHP locally and are rewritten to Vercel Functions online. */
 async function api(path, options = {}) {
   const res = await fetch(path, {
     credentials: 'same-origin',
@@ -24,7 +23,7 @@ async function api(path, options = {}) {
   });
   let data;
   try { data = await res.json(); }
-  catch { throw new Error('Server did not return valid JSON — check the PHP file for errors.'); }
+  catch { throw new Error('Server returned an invalid response. Check the API deployment and server logs.'); }
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data;
 }
@@ -216,7 +215,7 @@ async function loadProperties(){
     rebuildMarkers(records);
     renderList(records);
   } catch (err) {
-    list.innerHTML = `<div class="empty-note">Couldn't load records: ${err.message}<br>Check that Apache + MySQL are running and the schema is imported.</div>`;
+    list.innerHTML = `<div class="empty-note">Couldn't load records: ${err.message}<br>Check that the API is deployed and the database is configured.</div>`;
   }
 }
 

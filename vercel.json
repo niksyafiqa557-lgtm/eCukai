@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/login.php", "destination": "/api/login" },
+    { "source": "/register.php", "destination": "/api/register" },
+    { "source": "/logout.php", "destination": "/api/logout" },
+    { "source": "/api/search_property.php", "destination": "/api/search" },
+    { "source": "/api/property_details.php", "destination": "/api/property" },
+    { "source": "/api/dashboard_stats.php", "destination": "/api/stats" },
+    { "source": "/api/add_property.php", "destination": "/api/add-property" }
+  ]
+}

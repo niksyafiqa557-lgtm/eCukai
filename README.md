@@ -6,11 +6,18 @@
 htdocs/
 └── ecukai-lot/
     ├── config.php
+   ├── lib/
+   │   ├── auth.js
+   │   ├── db.js
+   │   └── http.js
    ├── index.html
     ├── login.php
     ├── logout.php
    ├── register.php
    ├── schema.sql
+   ├── neon-schema.sql
+   ├── package.json
+   ├── vercel.json
    ├── assets/
    │   ├── css/
    │   │   └── app.css
@@ -43,6 +50,37 @@ htdocs/
 5. Visit `http://localhost/ecukai-lot/` — wire your login form to POST
    JSON to `login.php`, and have your dashboard's map/search call the two
    endpoints in `api/`.
+
+## Deploying on Vercel with Neon
+
+Vercel serves the static frontend and runs the JavaScript files in `api/`
+as serverless functions. The existing PHP endpoints remain available for
+local XAMPP use; `vercel.json` rewrites the frontend's PHP-style URLs to
+the Vercel functions. `.vercelignore` prevents the PHP source and local
+configuration from being published.
+
+1. In the Neon project, open the SQL Editor and run `neon-schema.sql`.
+   This creates the PostgreSQL tables and sample property/tax/payment
+   records. It does not create a sample officer account; register one
+   through the website after deployment.
+2. Push this project to GitHub and import that repository into Vercel.
+   Vercel should detect the serverless functions in `api/`. Keep the
+   project root as the root directory and use the default build settings.
+3. In the Vercel project settings, add these environment variables for
+   Production (and Preview too, if you will test preview deployments):
+   - `DATABASE_URL`: the Neon connection string from the Neon dashboard's
+     **Connect** panel. Keep it secret; never add it to frontend code or
+     commit it to Git.
+   - `SESSION_SECRET`: a private random value of at least 32 characters.
+4. Redeploy after saving the environment variables.
+5. Open the Vercel URL, register an officer account, then log in. Public
+   registration creates officer accounts only. To enable **Add Property**
+   for an account, change that officer's `role` to `admin` in Neon SQL
+   Editor after confirming the correct account.
+
+Vercel and Neon have their own plan limits and terms; check the current
+provider dashboards before publishing. Do not use the sample officer's
+placeholder password hash from `schema.sql` as a real account.
 
 ## Endpoints
 

@@ -1,0 +1,4 @@
+*.php
+config.php
+schema.sql
+neon-schema.sql

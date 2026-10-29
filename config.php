@@ -1,12 +1,13 @@
 <?php
 // ---------------------------------------------------------------------
-// Database connection (XAMPP defaults — adjust if your setup differs)
+// Database connection. Hosting providers can set these as environment variables.
+// The defaults preserve the existing local XAMPP setup.
 // ---------------------------------------------------------------------
-$DB_HOST = 'localhost';
-$DB_PORT = '3307';
-$DB_NAME = 'new_ecukai';
-$DB_USER = 'root';
-$DB_PASS = '';
+$DB_HOST = getenv('DB_HOST') ?: 'localhost';
+$DB_PORT = getenv('DB_PORT') ?: '3307';
+$DB_NAME = getenv('DB_NAME') ?: 'new_ecukai';
+$DB_USER = getenv('DB_USER') ?: 'root';
+$DB_PASS = getenv('DB_PASS') ?: '';
 
 try {
     $pdo = new PDO(
